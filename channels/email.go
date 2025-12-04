@@ -2,6 +2,7 @@ package channels
 
 import (
 	"context"
+	"fmt"
 	"net/mail"
 
 	"github.com/forhsd/alert/errors"
@@ -28,6 +29,33 @@ func NewEmailChannel(config EmailChannel) (*EmailChannel, error) {
 	return &EmailChannel{
 		BaseChannel: BaseChannel{},
 	}, nil
+}
+
+func (e *EmailChannel) Validate() error {
+
+	if err := e.BaseChannel.Validate(); err != nil {
+		return err
+	}
+	if e.SmtpServer == "" {
+		return fmt.Errorf("SmtpServer不能为空")
+	}
+	if e.SmtpPort == 0 {
+		return fmt.Errorf("SmtpPort不能为空")
+	}
+	if e.UserName == "" {
+		return fmt.Errorf("邮件用户名不能为空")
+	}
+	if e.Password == "" {
+		return fmt.Errorf("邮件密码不能为空")
+	}
+	if e.From == "" {
+		return fmt.Errorf("发件人不能为空")
+	}
+	if len(e.To) == 0 {
+		return fmt.Errorf("收件人不能为空")
+	}
+
+	return nil
 }
 
 func (e *EmailChannel) Send(ctx context.Context, title string, content []*errors.ErrorDetail) error {

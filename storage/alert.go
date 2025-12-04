@@ -87,6 +87,10 @@ func (a *AlertLibrary) initChannels() error {
 			return fmt.Errorf("config for channel %s not found", channelName)
 		}
 
+		if err := config.Validate(); err != nil {
+			return err
+		}
+
 		// var channel channels.Channel
 		// var err error
 
