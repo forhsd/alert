@@ -16,12 +16,13 @@ type EmailChannel struct {
 }
 
 type EmailConfig struct {
-	SmtpServer string   `json:"smtpServer"`
-	SmtpPort   uint     `json:"smtpPort"`
-	UserName   string   `json:"userName"`
-	Password   string   `json:"password"`
-	From       string   `json:"from"`
-	To         []string `json:"to"`
+	SmtpServer string       `json:"smtpServer"`
+	SmtpPort   uint         `json:"smtpPort"`
+	UserName   string       `json:"userName"`
+	Password   string       `json:"password"`
+	From       string       `json:"from"`
+	To         []string     `json:"to"`
+	Cc         mail.Address `json:"cc"`
 }
 
 // NewEmailChannel 创建邮件渠道
@@ -100,11 +101,10 @@ func (e *EmailChannel) sendSMTPEmail(ctx context.Context, subject string, conten
 	}
 
 	m := gomail.NewMessage()
-	m.SetHeader("From", from.String())     // holderzone@126.com
-	m.SetHeader("To", e.EmailConfig.To...) // "forhsd@qq.com",
-	m.SetHeader("Subject", subject)        // "主题"
-
-	// m.SetAddressHeader("Cc", "forhsd@qq.com", "峰")
+	m.SetHeader("From", from.String())                                        // holderzone@126.com
+	m.SetHeader("To", e.EmailConfig.To...)                                    // "forhsd@qq.com",
+	m.SetHeader("Subject", subject)                                           // "主题"
+	m.SetAddressHeader("Cc", e.EmailConfig.Cc.Address, e.EmailConfig.Cc.Name) // 抄送
 	// m.Attach("/home/Alex/lolcat.jpg")
 
 	m.SetBody("text/plain", textBody)

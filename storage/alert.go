@@ -21,6 +21,7 @@ type AlertConfig struct {
 	BufferSize          int                         `json:"buffer_size"`      // 缓冲区大小
 	EnabledChannels     []string                    `json:"enabled_channels"` // 启用的渠道
 	ChannelConfigs      map[string]channels.Channel `json:"channel_configs"`  // 各渠道配置
+	Subject             string                      `json:"subject"`          // 主题
 	ErrorHandler        func(error)                 `json:"-"`                // 错误处理器
 }
 
@@ -219,7 +220,7 @@ func (a *AlertLibrary) flushErrors() {
 	}
 
 	// 分发到各个渠道
-	a.dispatcher.Dispatch(errors)
+	a.dispatcher.Dispatch(a.config.Subject, errors)
 
 	// 清空已发送的错误
 	a.storage.ClearSent()

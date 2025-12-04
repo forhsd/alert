@@ -25,7 +25,7 @@ func NewDispatcher(channels map[string]channels.Channel, interval time.Duration)
 }
 
 // Dispatch 分发消息到所有渠道
-func (d *Dispatcher) Dispatch(errors []*errors.ErrorDetail) {
+func (d *Dispatcher) Dispatch(subject string, errors []*errors.ErrorDetail) {
 	var wg sync.WaitGroup
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
@@ -39,7 +39,7 @@ func (d *Dispatcher) Dispatch(errors []*errors.ErrorDetail) {
 
 			// 带重试的发送
 			for i := range 3 {
-				if err = ch.Send(ctx, "系统告警", errors); err == nil {
+				if err = ch.Send(ctx, subject, errors); err == nil {
 					break
 				}
 				if i < 2 {
