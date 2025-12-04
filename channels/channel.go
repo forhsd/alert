@@ -18,8 +18,15 @@ type Channel interface {
 	Name() string
 }
 
+// 通知内容接口
+type Notice interface {
+	Email(title string, content []*errors.ErrorDetail) hermes.Email
+	Name() string
+}
+
 // BaseChannel 基础渠道
 type BaseChannel struct {
+	Notice
 	hermes.Hermes
 	Name       string
 	Timeout    time.Duration
